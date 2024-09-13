@@ -13,6 +13,7 @@ public class Weapon : MonoBehaviour
     public bool isShooting, readyToShoot;
     bool allowReset = true;
     public float shootingDelay = 2f;
+    public float weaponDamage = 7;
 
     public float reloadtime;
     public int magazineSize, magazineBulletsLeft;
@@ -47,6 +48,14 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
+
+        if (magazineBulletsLeft == 0 && isShooting)
+    {
+        if (!SoundManger.Instance.emptyMagazineSound.isPlaying) // Check if the sound is already playing
+        {
+            SoundManger.Instance.emptyMagazineSound.Play();
+        }
+    }
         if (currentShootingMode == ShootingMode.Auto)
         {
             //Holding the Key
@@ -104,7 +113,24 @@ public class Weapon : MonoBehaviour
     {
         Debug.Log("Hit: " + hit.collider.name);
 
-        CreateBulletImpactEffect(hit);
+        
+        if (!hit.collider.CompareTag("Zombie"))
+        {
+            CreateBulletImpactEffect(hit);
+        }
+        // Check if the object hit has the tag "Zombie"
+        if (hit.collider.CompareTag("Zombie"))
+        {
+            // Get the Zombie script from the hit object
+            Zombie zombie = hit.collider.GetComponent<Zombie>();
+
+            // Call the TakeDamage method if the Zombie script is present
+            if (zombie != null)
+            {
+                zombie.TakeDamage((int)weaponDamage); // Assuming weaponDamage is a float, cast it to int
+            }
+        }
+
         // Apply damage to target or other effects here
     }
 
@@ -125,6 +151,7 @@ public class Weapon : MonoBehaviour
     {
         isReloading = true;
         Invoke ("ReloadCompleted", reloadtime);
+        SoundManger.Instance.reloadingSoundAK47.Play();
     }
 
     private void ReloadCompleted ()

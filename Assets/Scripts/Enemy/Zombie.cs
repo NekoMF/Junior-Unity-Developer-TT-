@@ -9,6 +9,7 @@ public class Zombie : MonoBehaviour
     [SerializeField] private int zombieHP = 100;
 
     private Animator animator;
+    public bool isDead;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +30,7 @@ public class Zombie : MonoBehaviour
             {
                 collider.enabled = false;
             }
+            isDead = true;
         }
         else
         {

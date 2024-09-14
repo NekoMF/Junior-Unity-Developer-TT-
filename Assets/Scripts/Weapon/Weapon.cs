@@ -15,7 +15,7 @@ public class Weapon : MonoBehaviour
     public float shootingDelay = 2f;
     public float weaponDamage = 7;
 
-    public float reloadtime;
+    public float reloadTime;
     public int magazineSize, magazineBulletsLeft;
     public bool isReloading;
 
@@ -153,7 +153,7 @@ public class Weapon : MonoBehaviour
     private void Reload()
     {
         isReloading = true;
-        Invoke ("ReloadCompleted", reloadtime);
+        Invoke ("ReloadCompleted", reloadTime);
         SoundManger.Instance.reloadingSoundAK47.Play();
     }
 

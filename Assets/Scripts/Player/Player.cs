@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -44,6 +45,14 @@ public class Player : MonoBehaviour
         playerHealthUI.gameObject.SetActive(false);
         GetComponent<ScreenFader>().StartFade();
         StartCoroutine(ShowGameOverUI());
+
+        int waveSurvived = GlobalReferences.Instance.waveNumber;
+        int savedHighScore = SaveLoadManager.Instance.LoadHighScore();
+
+        // Save the maximum of the current wave or the previously saved high score
+        SaveLoadManager.Instance.SaveHighScore(Mathf.Max(waveSurvived - 1, savedHighScore));
+
+
         isDead = true;
     }
 
@@ -51,6 +60,15 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         gameOverUI.gameObject.SetActive(true);
+        StartCoroutine(ReturnToMainMenu());
+    }
+
+    private IEnumerator ReturnToMainMenu()
+    {
+        yield return new WaitForSeconds (2f);
+        SceneManager.LoadScene("Menu");
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private IEnumerator BloodyScreenEffect()

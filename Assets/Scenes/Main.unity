@@ -1399,7 +1399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f0ba3c9c75fc534b8516dc8bac494d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHP: 1000
+  playerHP: 100
   bloodyScreen: {fileID: 1777115587}
   playerHealthUI: {fileID: 644415071}
   gameOverUI: {fileID: 1887720016}
@@ -3523,6 +3523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletImpactEffectPrefab: {fileID: 3468302772687036706, guid: 8314d6323cff85b42b9fa1b96fee3aee, type: 3}
   bloodSprayEffectPrefab: {fileID: 881861664669919384, guid: 03bdec09cbe6c7b4086908f0f8147cf4, type: 3}
+  waveNumber: 0
 --- !u!4 &1979157491
 Transform:
   m_ObjectHideFlags: 0

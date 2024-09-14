@@ -9,25 +9,10 @@ public class Zombie : MonoBehaviour
     [SerializeField] private int zombieHP = 100;
 
     private Animator animator;
-    private NavMeshAgent navMeshAgent;
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (navMeshAgent.velocity.magnitude > 0.1f)
-        {
-            animator.SetBool("isWalking", true);
-        }
-        else
-        {
-            animator.SetBool("isWalking", false);
-        }
     }
 
     public void TakeDamage (int damageAmount)
@@ -49,5 +34,18 @@ public class Zombie : MonoBehaviour
         {
             animator.SetTrigger("DAMAGE");
         }
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, 2.5f);     
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, 18f);   
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 21f);   
     }
 }

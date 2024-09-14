@@ -121,6 +121,7 @@ public class Weapon : MonoBehaviour
         // Check if the object hit has the tag "Zombie"
         if (hit.collider.CompareTag("Zombie"))
         {
+
             // Get the Zombie script from the hit object
             Zombie zombie = hit.collider.GetComponent<Zombie>();
 
@@ -129,6 +130,8 @@ public class Weapon : MonoBehaviour
             {
                 zombie.TakeDamage((int)weaponDamage); // Assuming weaponDamage is a float, cast it to int
             }
+
+            CreateBloodSplashEffect(hit);
         }
 
         // Apply damage to target or other effects here
@@ -171,6 +174,16 @@ public class Weapon : MonoBehaviour
         // Use the point of impact and normal from RaycastHit
         GameObject hole = Instantiate(
             GlobalReferences.Instance.bulletImpactEffectPrefab,
+            hitInfo.point,
+            Quaternion.LookRotation(hitInfo.normal)
+        );
+    }
+
+    void CreateBloodSplashEffect(RaycastHit hitInfo)
+    {
+        // Use the point of impact and normal from RaycastHit
+        GameObject hole = Instantiate(
+            GlobalReferences.Instance.bloodSprayEffectPrefab,
             hitInfo.point,
             Quaternion.LookRotation(hitInfo.normal)
         );

@@ -2,64 +2,58 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private CharacterController controller; 
+    public float walkSpeed = 5f;
+    public float sprintSpeed = 8f;
+    public float jumpHeight = 2f;
+    public float gravity = -9.81f;
 
-    public float speed = 12f;
-    public float gravity = -9.81f *2 ;
-    public float jumpHeight = 3f;
+    private CharacterController controller;
+    private Vector3 velocity;
+    private bool isGrounded;
 
-    public Transform groundCheck;
-    public float groundDistance= 0.4f;
     public LayerMask groundMask;
+    private Animator animator; // Reference to the Animator component
 
-    Vector3 velocity;
-
-    bool isGrounded;
-    bool isMoving;
-
-    private Vector3 lastPosition = new Vector3 (0f, 0f ,0f);
-
-    // Start is called before the first frame update
     void Start()
     {
-        controller = GetComponent<CharacterController>(); 
+        controller = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>(); // Get the Animator component from the child
     }
 
-    // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics.CheckSphere (groundCheck.position, groundDistance, groundMask );   
+        // Ground Check using Raycast
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f, groundMask);
+
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; 
+            velocity.y = -2f;
         }
 
-        float x = Input.GetAxis ("Horizontal");
-        float z = Input.GetAxis ("Vertical");
+        // Movement
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z; 
-        controller.Move(move * speed * Time.deltaTime); 
+        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        float speed = (Input.GetKey(KeyCode.LeftShift) && moveZ > 0) ? sprintSpeed : walkSpeed;
+        float moveSpeed = move.magnitude * speed;
 
-        if (Input.GetButtonDown("Jump")&& isGrounded)
+        // Update Animator parameter for Blend Tree
+        float speedParameter = moveZ > 0 ? moveSpeed : -moveSpeed; // Negative speed for backward movement
+        animator.SetFloat("Speed", speedParameter);
+
+        controller.Move(move * speed * Time.deltaTime);
+
+        // Jump
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
+            animator.SetTrigger("Jump"); // Trigger the Jump animation
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
-        
-        velocity.y += gravity *Time.deltaTime;
 
-        controller.Move (velocity * Time.deltaTime);
+        // Apply gravity
+        velocity.y += gravity * Time.deltaTime;
 
-        if (lastPosition != gameObject.transform.position&& isGrounded)
-        {
-            isMoving = true;
-
-        }
-        else
-        {
-            isMoving = false;
-        }
-
-        lastPosition = gameObject.transform.position;
-
+        controller.Move(velocity * Time.deltaTime);
     }
 }

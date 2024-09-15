@@ -26,13 +26,13 @@ public class Player : MonoBehaviour
         
         if (playerHP <= 0)
         {
-           print("DEATH");
+           //print("DEATH");
            PlayerDeath();
 
         }
         else
         {
-            print("Player Hit");
+            //print("Player Hit");
             StartCoroutine(BloodyScreenEffect());
             playerHealthUI.text = $"Health: {playerHP}";
         }
@@ -112,10 +112,18 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+        // Check if the collider is a Zombie's hand
         if (other.CompareTag("ZombieHand") && !isDead)
         {
-            TakeDamage(25);
+            // Get the parent Zombie component
+            Zombie zombie = other.GetComponentInParent<Zombie>();
+
+            // Retrieve ZombieData from the Zombie component
+            ZombieData zombieData = zombie.GetZombieData();
+
+            // Deal damage to the player using the damage value from ZombieData
+            TakeDamage(zombieData.damage);
+            Debug.Log(zombieData.damage);
         }
     }
 }

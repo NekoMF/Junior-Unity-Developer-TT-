@@ -1,26 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Zombie : MonoBehaviour
 {
+    [SerializeField] private ZombieData zombieData;
 
-    [SerializeField] private int zombieHP = 100;
-
+    private int currentHP;
     private Animator animator;
+    private NavMeshAgent navMeshAgent;
+
     public bool isDead;
-    // Start is called before the first frame update
+
     void Start()
     {
         animator = GetComponent<Animator>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        currentHP = zombieData.maxHP;
     }
 
-    public void TakeDamage (int damageAmount)
+    public void TakeDamage(int damageAmount)
     {
-        zombieHP -= damageAmount;
-        
-        if (zombieHP <= 0)
+        currentHP -= damageAmount;
+
+        if (currentHP <= 0)
         {
             // Play one of the death animations randomly
             animator.SetTrigger(UnityEngine.Random.Range(0, 2) == 0 ? "DIE1" : "DIE2");
@@ -43,16 +46,30 @@ public class Zombie : MonoBehaviour
         }
     }
 
+    public int GetDamage()
+    {
+        return zombieData.damage;
+    }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 2.5f);     
+        Gizmos.DrawWireSphere(transform.position, 2.5f);
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, 18f);   
+        Gizmos.DrawWireSphere(transform.position, 18f);
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, 21f);   
+        Gizmos.DrawWireSphere(transform.position, 21f);
+    }
+
+    public void SetZombieData(ZombieData data)
+    {
+        zombieData = data;
+    }
+
+    public ZombieData GetZombieData()
+    {
+        return zombieData;
     }
 }

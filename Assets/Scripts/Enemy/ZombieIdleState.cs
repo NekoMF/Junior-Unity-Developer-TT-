@@ -7,30 +7,37 @@ public class ZombieIdleState : StateMachineBehaviour
 {
 
     float timer;
-    public float idleTime = 0f;
 
     Transform player; 
+    ZombieData zombieData;
+    Zombie zombie;
 
-    public float detectionAreaRadius = 18f; 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+       zombieData = animator.GetComponent<Zombie>()?.GetZombieData();
        timer = 0;
        player = GameObject.FindWithTag("Player").transform;
+       zombie = animator.GetComponent<Zombie>();
+       
+       
+       
     }
 
     
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
        timer += Time.deltaTime;
-       if (timer > idleTime)
+       if (timer > zombieData.idleTime)
        {
-            animator.SetBool("isPatroling", true);
+            animator.SetBool("isPatrolling", true);
        }
 
        float distanceFromPlayer = Vector3.Distance (player.position, animator.transform.position);
-       if (distanceFromPlayer < detectionAreaRadius)
+       if (distanceFromPlayer < zombieData.detectionAreaRadius)
        {
          animator.SetBool("isChasing", true);
        }
     }
+
+
 }

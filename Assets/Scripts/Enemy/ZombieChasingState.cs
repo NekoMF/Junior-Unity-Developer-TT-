@@ -8,17 +8,14 @@ public class ZombieChasingState : StateMachineBehaviour
 
     Transform player;
     NavMeshAgent navMeshAgent;
-
-    public float chaseSpeed = 6f;
-    public float stopChasingDistance = 21f;
-    public float attackDistance = 2.5f;
+    ZombieData zombieData;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        zombieData = animator.GetComponent<Zombie>()?.GetZombieData();
         player = GameObject.FindWithTag("Player").transform;
         navMeshAgent = animator.GetComponent<NavMeshAgent>();
-
-        navMeshAgent.speed = chaseSpeed;
+        navMeshAgent.speed = zombieData.chaseSpeed; 
     }
 
     
@@ -28,12 +25,12 @@ public class ZombieChasingState : StateMachineBehaviour
        animator.transform.LookAt(player);
 
        float distanceFromPlayer = Vector3.Distance(player.position, animator.transform.position);
-       if (distanceFromPlayer>stopChasingDistance)
+       if (distanceFromPlayer>zombieData.stopChasingDistance)
        {
             animator.SetBool("isChasing", false);
        }
 
-       if (distanceFromPlayer < attackDistance)
+       if (distanceFromPlayer < zombieData.attackDistance)
        {
             animator.SetBool("isAttacking", true);
        }

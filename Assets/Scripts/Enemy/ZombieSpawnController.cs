@@ -17,8 +17,7 @@ public class ZombieSpawnController : MonoBehaviour
     public float cooldownCounter = 0;
 
     public List<Zombie> currentZombiesAlive;
-
-    public GameObject zombiePrefab; 
+    public List<ZombieData> zombieDataTypes;
 
     private void Start()
     {
@@ -79,19 +78,23 @@ public class ZombieSpawnController : MonoBehaviour
     }
 
     private IEnumerator SpawnWave()
+{
+    for (int i = 0; i < currentZombiePerWave; i++)
     {
-        for (int i = 0; i < currentZombiePerWave; i++)
-        {
-            Vector3 spawnOffset = new Vector3(UnityEngine.Random.Range(-1f, 1), 0f, UnityEngine.Random.Range(-1f, 1f));
-            Vector3 spawnPosition = transform.position + spawnOffset;
+        Vector3 spawnOffset = new Vector3(UnityEngine.Random.Range(-1f, 1), 0f, UnityEngine.Random.Range(-1f, 1f));
+        Vector3 spawnPosition = transform.position + spawnOffset;
 
-            var zombie = Instantiate(zombiePrefab, spawnPosition, Quaternion.identity);
+        
 
-            Zombie zombieScript = zombie.GetComponent<Zombie>();
+        // Assign a random ZombieData
+        ZombieData randomData = zombieDataTypes[UnityEngine.Random.Range(0, zombieDataTypes.Count)];
+        GameObject zombie = Instantiate(randomData.zombiePrefab, spawnPosition, Quaternion.identity);
+        Zombie zombieScript = zombie.GetComponent<Zombie>();
+        zombieScript.SetZombieData(randomData);
 
-            currentZombiesAlive.Add(zombieScript);
+        currentZombiesAlive.Add(zombieScript);
 
-            yield return new WaitForSeconds(spawnDelay); 
-        }
+        yield return new WaitForSeconds(spawnDelay); 
     }
+}
 }

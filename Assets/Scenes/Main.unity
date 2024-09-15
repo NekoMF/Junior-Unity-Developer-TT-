@@ -1278,7 +1278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f0ba3c9c75fc534b8516dc8bac494d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHP: 100
+  playerHP: 10000
   bloodyScreen: {fileID: 1777115587}
   playerHealthUI: {fileID: 644415071}
   gameOverUI: {fileID: 1887720016}
@@ -2340,63 +2340,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!1001 &1318862849
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3091929109152078103, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_Name
-      value: Zombie
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -10.855932
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.00000047683716
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 14.808087
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7442354202173861984, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
 --- !u!1 &1424790429
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,7 +2978,10 @@ MonoBehaviour:
   inCooldown: 0
   cooldownCounter: 0
   currentZombiesAlive: []
-  zombiePrefab: {fileID: 3091929109152078103, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}
+  zombieDataTypes:
+  - {fileID: 11400000, guid: 84cac80a54c222745829576e07437813, type: 2}
+  - {fileID: 11400000, guid: 8a474367d898bb04fb94049ab0700cf5, type: 2}
+  - {fileID: 11400000, guid: 6f1ca0a2765cc754a995326edc0955dc, type: 2}
 --- !u!4 &1814273246
 Transform:
   m_ObjectHideFlags: 0
@@ -11187,4 +11133,3 @@ SceneRoots:
   - {fileID: 310127313}
   - {fileID: 1019822618}
   - {fileID: 1814273246}
-  - {fileID: 1318862849}

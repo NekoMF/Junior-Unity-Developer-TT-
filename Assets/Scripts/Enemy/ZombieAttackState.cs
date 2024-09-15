@@ -8,11 +8,12 @@ public class ZombieAttackState : StateMachineBehaviour
 
     Transform player;
     NavMeshAgent navMeshAgent;
-
-    float stopAttackingDistance = 2.5f;
+    ZombieData zombieData;
+    Zombie zombie;
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        zombieData = animator.GetComponent<Zombie>()?.GetZombieData();
         player = GameObject.FindWithTag("Player").transform;
         navMeshAgent = animator.GetComponent<NavMeshAgent>();
     }
@@ -23,7 +24,7 @@ public class ZombieAttackState : StateMachineBehaviour
         LookAtPlayer();    
 
         float distanceFromPlayer = Vector3.Distance(player.position, animator.transform.position);
-        if (distanceFromPlayer>stopAttackingDistance)
+        if (distanceFromPlayer>zombieData.attackDistance)
         {
             animator.SetBool("isAttacking", false);
         }

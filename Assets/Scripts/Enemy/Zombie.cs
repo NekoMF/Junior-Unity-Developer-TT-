@@ -22,15 +22,20 @@ public class Zombie : MonoBehaviour
         
         if (zombieHP <= 0)
         {
+            // Play one of the death animations randomly
             animator.SetTrigger(UnityEngine.Random.Range(0, 2) == 0 ? "DIE1" : "DIE2");
-            
-            // Disable the collider
-            Collider collider = GetComponent<Collider>();
-            if (collider != null)
+
+            // Disable all colliders in this object, including children
+            Collider[] colliders = GetComponentsInChildren<Collider>();
+            foreach (Collider col in colliders)
             {
-                collider.enabled = false;
+                col.enabled = false;
             }
+
             isDead = true;
+
+            // Destroy the zombie game object after 7 seconds
+            Destroy(gameObject, 7f);
         }
         else
         {

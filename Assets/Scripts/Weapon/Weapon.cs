@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -114,21 +116,38 @@ public class Weapon : MonoBehaviour
         Debug.Log("Hit: " + hit.collider.name);
 
         
-        if (!hit.collider.CompareTag("Zombie"))
+        if (!(hit.collider.CompareTag("Zombie")||hit.collider.CompareTag("ZombieHead")))
         {
             CreateBulletImpactEffect(hit);
         }
         // Check if the object hit has the tag "Zombie"
-        if (hit.collider.CompareTag("Zombie"))
+        if (hit.collider.CompareTag("ZombieHead"))
         {
+            Debug.Log("zombie head");
 
+            // Get the Zombie script from the parent object of the hit collider
+            Zombie zombie = hit.collider.GetComponentInParent<Zombie>();
+
+            // Call the TakeDamage method with double damage if the Zombie script is present
+            if (zombie != null)
+            {
+                int headshotDamage = (int)(weaponDamage * 2); // Apply headshot damage
+                zombie.TakeDamage(headshotDamage);
+                CreateDamageIndicatorEffect(hit, headshotDamage);
+            }
+
+            CreateBloodSplashEffect(hit);
+        }
+        else if (hit.collider.CompareTag("Zombie"))
+        {
             // Get the Zombie script from the hit object
             Zombie zombie = hit.collider.GetComponent<Zombie>();
 
             // Call the TakeDamage method if the Zombie script is present
             if (zombie != null)
             {
-                zombie.TakeDamage((int)weaponDamage); // Assuming weaponDamage is a float, cast it to int
+                zombie.TakeDamage((int)weaponDamage);
+                CreateDamageIndicatorEffect(hit, (int)weaponDamage);
             }
 
             CreateBloodSplashEffect(hit);
@@ -182,10 +201,38 @@ public class Weapon : MonoBehaviour
     void CreateBloodSplashEffect(RaycastHit hitInfo)
     {
         // Use the point of impact and normal from RaycastHit
-        GameObject hole = Instantiate(
+        GameObject bloodSplash = Instantiate(
             GlobalReferences.Instance.bloodSprayEffectPrefab,
             hitInfo.point,
             Quaternion.LookRotation(hitInfo.normal)
         );
+    }
+
+    void CreateDamageIndicatorEffect(RaycastHit hitInfo, int damageAmount)
+    {
+        // Use the point of impact and normal from RaycastHit
+        GameObject indicator = Instantiate(
+            GlobalReferences.Instance.damageIndicatorEffectPrefab,
+            hitInfo.point,  // Use world position
+            Quaternion.identity  // Orientation is not critical for text
+        );
+
+        var textMesh = indicator.GetComponent<TextMeshPro>();
+        if (textMesh != null)
+        {
+            // Set the text to display the damage amount
+            textMesh.text = damageAmount.ToString();
+
+            // Start the fade-out coroutine
+        }
+
+        // Ensure it's facing the camera
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            // Make the text face the camera
+            textMesh.transform.LookAt(mainCamera.transform);
+            textMesh.transform.Rotate(0, 180, 0);  // Adjust rotation so the text faces the player correctly
+        }
     }
 }

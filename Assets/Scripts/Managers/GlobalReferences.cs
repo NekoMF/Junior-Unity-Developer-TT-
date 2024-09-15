@@ -8,6 +8,7 @@ public class GlobalReferences : MonoBehaviour
     
     public GameObject bulletImpactEffectPrefab;
     public GameObject bloodSprayEffectPrefab;
+    public GameObject damageIndicatorEffectPrefab;
     public int waveNumber;
 
     private void Awake()

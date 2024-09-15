@@ -46,6 +46,11 @@ public class Weapon : MonoBehaviour
         burstBulletsLeft = bulletsPerBurst;
         magazineBulletsLeft = magazineSize;
     }
+
+    private void Start() 
+    {
+        
+    }
    
 
     void Update()
@@ -168,7 +173,6 @@ public class Weapon : MonoBehaviour
         Invoke("FireWeapon", shootingDelay);
     }
 }
-
     private void Reload()
     {
         isReloading = true;
@@ -233,6 +237,20 @@ public class Weapon : MonoBehaviour
             // Make the text face the camera
             textMesh.transform.LookAt(mainCamera.transform);
             textMesh.transform.Rotate(0, 180, 0);  // Adjust rotation so the text faces the player correctly
+        }
+    }
+
+    private void UpdateWeaponStats()
+    {
+        if (Inventory.Instance.currentWeapon != null)
+        {
+            WeaponData weaponData = Inventory.Instance.currentWeapon;
+
+            magazineSize = weaponData.magazineSize;
+            weaponDamage = weaponData.damage;
+            reloadTime = weaponData.reloadTime;
+
+            // Update other weapon properties as needed
         }
     }
 }

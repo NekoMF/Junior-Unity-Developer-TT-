@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -12,30 +11,18 @@ public class Weapon : MonoBehaviour
     public TextMeshProUGUI ammoDisplay;
 
     // Shooting
+    public bool isEquipped = false;
+
     public bool isShooting, readyToShoot;
     bool allowReset = true;
-
     public bool isReloading;
     public int magazineBulletsLeft; // Current number of bullets in the magazine
-
-    // Spread
-    public float spreadIntensity;
 
     // Bullet
     public GameObject muzzleEffect;
 
-    public enum ShootingMode
-    {
-        Single,
-        Auto
-    }
-
-    public ShootingMode currentShootingMode;
-
     private void Awake()
     {
-        // Initialize weapon based on WeaponData
-        InitializeWeapon();
         readyToShoot = true;
     }
 
@@ -49,6 +36,10 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
+        if (!isEquipped || weaponData == null) return; // Do nothing if weapon is not equipped
+
+        if (weaponData == null) return; // Do nothing if weaponData is null
+
         if (magazineBulletsLeft == 0 && isShooting)
         {
             if (!SoundManger.Instance.emptyMagazineSound.isPlaying) // Check if the sound is already playing
@@ -57,12 +48,16 @@ public class Weapon : MonoBehaviour
             }
         }
 
-        if (currentShootingMode == ShootingMode.Auto)
+        // Determine shooting mode based on the int value from WeaponData
+        bool isAuto = weaponData.shootingMode == 2;
+        bool isSingle = weaponData.shootingMode == 1;
+
+        if (isAuto)
         {
             // Holding the Key
             isShooting = Input.GetKey(KeyCode.Mouse0);
         }
-        else if (currentShootingMode == ShootingMode.Single)
+        else if (isSingle)
         {
             isShooting = Input.GetKeyDown(KeyCode.Mouse0);
         }
@@ -85,14 +80,19 @@ public class Weapon : MonoBehaviour
 
     private void FireWeapon()
     {
-        if (Inventory.Instance.currentWeapon == null || Inventory.Instance.currentWeapon.weaponPrefab != this.gameObject)
-        {
-            return; // No weapon equipped or the wrong weapon, do nothing
-        }
+
         magazineBulletsLeft--;
 
-        muzzleEffect.GetComponent<ParticleSystem>().Play();
-        SoundManger.Instance.shootingSoundAK47.Play();
+        if (muzzleEffect != null)
+        {
+            muzzleEffect.GetComponent<ParticleSystem>().Play();
+        }
+
+        if (SoundManger.Instance.shootingSoundAK47 != null)
+        {
+            SoundManger.Instance.shootingSoundAK47.Play();
+        }
+
         readyToShoot = false;
 
         // Calculate random spread
@@ -159,7 +159,10 @@ public class Weapon : MonoBehaviour
     {
         isReloading = true;
         Invoke("ReloadCompleted", weaponData.reloadTime);
-        SoundManger.Instance.reloadingSoundAK47.Play();
+        if (SoundManger.Instance.reloadingSoundAK47 != null)
+        {
+            SoundManger.Instance.reloadingSoundAK47.Play();
+        }
     }
 
     private void ReloadCompleted()
@@ -176,50 +179,50 @@ public class Weapon : MonoBehaviour
 
     void CreateBulletImpactEffect(RaycastHit hitInfo)
     {
-        GameObject hole = Instantiate(
-            GlobalReferences.Instance.bulletImpactEffectPrefab,
-            hitInfo.point,
-            Quaternion.LookRotation(hitInfo.normal)
-        );
+        if (GlobalReferences.Instance.bulletImpactEffectPrefab != null)
+        {
+            Instantiate(
+                GlobalReferences.Instance.bulletImpactEffectPrefab,
+                hitInfo.point,
+                Quaternion.LookRotation(hitInfo.normal)
+            );
+        }
     }
 
     void CreateBloodSplashEffect(RaycastHit hitInfo)
     {
-        GameObject bloodSplash = Instantiate(
-            GlobalReferences.Instance.bloodSprayEffectPrefab,
-            hitInfo.point,
-            Quaternion.LookRotation(hitInfo.normal)
-        );
+        if (GlobalReferences.Instance.bloodSprayEffectPrefab != null)
+        {
+            Instantiate(
+                GlobalReferences.Instance.bloodSprayEffectPrefab,
+                hitInfo.point,
+                Quaternion.LookRotation(hitInfo.normal)
+            );
+        }
     }
 
     void CreateDamageIndicatorEffect(RaycastHit hitInfo, int damageAmount)
     {
-        GameObject indicator = Instantiate(
-            GlobalReferences.Instance.damageIndicatorEffectPrefab,
-            hitInfo.point,  
-            Quaternion.identity  
-        );
-
-        var textMesh = indicator.GetComponent<TextMeshPro>();
-        if (textMesh != null)
+        if (GlobalReferences.Instance.damageIndicatorEffectPrefab != null)
         {
-            textMesh.text = damageAmount.ToString();
-        }
+            GameObject indicator = Instantiate(
+                GlobalReferences.Instance.damageIndicatorEffectPrefab,
+                hitInfo.point,  
+                Quaternion.identity  
+            );
 
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            textMesh.transform.LookAt(mainCamera.transform);
-            textMesh.transform.Rotate(0, 180, 0);
-        }
-    }
+            var textMesh = indicator.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = damageAmount.ToString();
+            }
 
-    // Initialize weapon stats from WeaponData
-    private void InitializeWeapon()
-    {
-        if (Inventory.Instance.currentWeapon != null)
-        {
-            weaponData = Inventory.Instance.currentWeapon;
+            Camera mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                textMesh.transform.LookAt(mainCamera.transform);
+                textMesh.transform.Rotate(0, 180, 0);
+            }
         }
     }
 
@@ -228,5 +231,16 @@ public class Weapon : MonoBehaviour
     {
         weaponData = newWeaponData;
         magazineBulletsLeft = weaponData.magazineSize; // Reset the bullets count to full magazine
+    }
+
+    public void Equip()
+    {
+        isEquipped = true;
+    }
+
+    // Unequip this weapon
+    public void Unequip()
+    {
+        isEquipped = false;
     }
 }

@@ -12,10 +12,6 @@ public class WeaponData : ScriptableObject
     public float shootingDelay;
     public GameObject weaponPrefab;
     public int maxAmmo;
-    public ShootingMode shootingMode;
-    public enum ShootingMode
-    {
-        Single,
-        Auto
-    }
+    public int shootingMode;
+    
 }

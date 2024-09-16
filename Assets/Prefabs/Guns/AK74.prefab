@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6899283867672339132}
   - component: {fileID: 4491297598852401166}
   - component: {fileID: 7980528909941093156}
-  - component: {fileID: 1902875696690481197}
   - component: {fileID: 154585511612901899}
+  - component: {fileID: 2403563019796179605}
   m_Layer: 0
   m_Name: AK74
   m_TagString: Weapon
@@ -89,19 +89,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1902875696690481197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216909499359160277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 557be031daf868e4b98eba062e0c50ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponData: {fileID: 11400000, guid: fe6c655529833b745b09eba8e9f30e00, type: 2}
 --- !u!135 &154585511612901899
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -123,6 +110,25 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.3853628
   m_Center: {x: -0.0017576693, y: -0.036212504, z: -0.06259711}
+--- !u!114 &2403563019796179605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216909499359160277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3136b0b81cdab247823bc18ae16fb08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponData: {fileID: 11400000, guid: fe6c655529833b745b09eba8e9f30e00, type: 2}
+  ammoDisplay: {fileID: 0}
+  isShooting: 0
+  readyToShoot: 0
+  isReloading: 0
+  magazineBulletsLeft: 0
+  muzzleEffect: {fileID: 8345674246831984757}
 --- !u!1 &925376715165141893
 GameObject:
   m_ObjectHideFlags: 0

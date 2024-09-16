@@ -21,4 +21,4 @@ MonoBehaviour:
   shootingDelay: 0.2
   weaponPrefab: {fileID: 216909499359160277, guid: 5a99ab9ce712ed84283d469cba495873, type: 3}
   maxAmmo: 300
-  shootingMode: 1
+  shootingMode: 2

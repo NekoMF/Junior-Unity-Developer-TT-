@@ -43,12 +43,26 @@ public class Inventory : MonoBehaviour
 
     public void EquipWeapon(WeaponData newWeapon)
     {
+        // Set current weapon
         currentWeapon = newWeapon;
 
         // Enable only the equipped weapon and disable others
         foreach (var weaponEntry in weaponInstances)
         {
-            weaponEntry.Value.SetActive(weaponEntry.Key == newWeapon);
+            // Get the Weapon component from the instance
+            Weapon weapon = weaponEntry.Value.GetComponent<Weapon>();
+            
+            // Equip the selected weapon and unequip others
+            if (weaponEntry.Key == newWeapon)
+            {
+                weaponEntry.Value.SetActive(true);
+                weapon.Equip(); // Equip this weapon
+            }
+            else
+            {
+                weaponEntry.Value.SetActive(false);
+                weapon.Unequip(); // Unequip other weapons
+            }
         }
     }
 
@@ -66,15 +80,15 @@ public class Inventory : MonoBehaviour
         // Check if the collided object has the "Weapon" tag
         if (other.CompareTag("Weapon"))
         {
-            // Check if the collided object has a WeaponTest component
-            WeaponTest weaponTest = other.GetComponent<WeaponTest>();
-            if (weaponTest != null && weaponTest.weaponData != null)
+            // Check if the collided object has a Weapon component
+            Weapon weapon = other.GetComponent<Weapon>();
+            if (weapon != null && weapon.weaponData != null)
             {
                 // Check if the weapon is already in the inventory
-                if (!availableWeapons.Contains(weaponTest.weaponData))
+                if (!availableWeapons.Contains(weapon.weaponData))
                 {
                     // Add the weapon to the inventory
-                    AddWeaponToInventory(weaponTest.weaponData);
+                    AddWeaponToInventory(weapon.weaponData);
 
                     // Optionally destroy or deactivate the weapon object in the scene
                     Destroy(other.gameObject);
@@ -152,6 +166,4 @@ public class Inventory : MonoBehaviour
             Debug.Log("Weapon already in inventory.");
         }
     }
-
-
 }

@@ -7,7 +7,9 @@ public class WeaponData : ScriptableObject
     public float damage;
     public float range;
     public int magazineSize;
+    public float spreadIntensity;
     public float reloadTime;
+    public float shootingDelay;
     public GameObject weaponPrefab;
     public int maxAmmo;
     public ShootingMode shootingMode;

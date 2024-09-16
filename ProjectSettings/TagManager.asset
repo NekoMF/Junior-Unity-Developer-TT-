@@ -8,6 +8,11 @@ TagManager:
   - Waypoints
   - ZombieHand
   - ZombieHead
+  - Weapon
+  - WeaponHand
+  - Shotgun
+  - Rifle
+  - Pistol
   layers:
   - Default
   - TransparentFX

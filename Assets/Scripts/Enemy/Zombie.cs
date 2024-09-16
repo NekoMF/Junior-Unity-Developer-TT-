@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,8 +12,9 @@ public class Zombie : MonoBehaviour
     private NavMeshAgent navMeshAgent;
 
     public bool isDead;
+    private bool hasPlayedHitSound = false; // Flag to track hit sound
 
-    void Start()
+    private void Start()
     {
         animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -27,6 +29,7 @@ public class Zombie : MonoBehaviour
         {
             // Play one of the death animations randomly
             animator.SetTrigger(UnityEngine.Random.Range(0, 2) == 0 ? "DIE1" : "DIE2");
+            AudioManager.Instance.PlaySFX("Zombie Death", 0.5f);
 
             // Disable all colliders in this object, including children
             Collider[] colliders = GetComponentsInChildren<Collider>();
@@ -42,8 +45,22 @@ public class Zombie : MonoBehaviour
         }
         else
         {
+            // Play hit sound only if not already played
+            if (!hasPlayedHitSound)
+            {
+                AudioManager.Instance.PlaySFX("Zombie Hit", 0.5f);
+                hasPlayedHitSound = true; // Set flag to true after playing sound
+                StartCoroutine(ResetHitSoundFlag()); // Start coroutine to reset flag
+            }
+
             animator.SetTrigger("DAMAGE");
         }
+    }
+
+    private IEnumerator ResetHitSoundFlag()
+    {
+        yield return new WaitForSeconds(1.5f); // Wait for 1.5 seconds
+        hasPlayedHitSound = false; // Reset the flag
     }
 
     public int GetDamage()

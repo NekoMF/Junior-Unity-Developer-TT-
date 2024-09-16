@@ -17,6 +17,7 @@ public class Weapon : MonoBehaviour
     bool allowReset = true;
     public bool isReloading;
     public int magazineBulletsLeft; // Current number of bullets in the magazine
+    private bool hasPlayedEmptySound = false; // Flag to track empty magazine sound
 
     // Bullet
     public GameObject muzzleEffect;
@@ -38,14 +39,19 @@ public class Weapon : MonoBehaviour
     {
         if (!isEquipped || weaponData == null) return; // Do nothing if weapon is not equipped
 
-        if (weaponData == null) return; // Do nothing if weaponData is null
-
+        // Handle empty magazine sound
         if (magazineBulletsLeft == 0 && isShooting)
         {
-            if (!SoundManger.Instance.emptyMagazineSound.isPlaying) // Check if the sound is already playing
+            if (!hasPlayedEmptySound)
             {
-                SoundManger.Instance.emptyMagazineSound.Play();
+                AudioManager.Instance.PlaySFX("Magazine Empty", 1f);
+                hasPlayedEmptySound = true; // Set flag so sound plays only once
             }
+        }
+        else
+        {
+            // Reset the empty sound flag if there are bullets available
+            hasPlayedEmptySound = false;
         }
 
         // Determine shooting mode based on the int value from WeaponData
@@ -62,7 +68,9 @@ public class Weapon : MonoBehaviour
             isShooting = Input.GetKeyDown(KeyCode.Mouse0);
         }
 
-        if ((Input.GetKeyDown(KeyCode.R) && magazineBulletsLeft < weaponData.magazineSize) || (readyToShoot && !isShooting && !isReloading && magazineBulletsLeft <= 0))
+        // Reload only if there is ammo available
+        if ((Input.GetKeyDown(KeyCode.R) && magazineBulletsLeft < weaponData.magazineSize && Inventory.Instance.weaponAmmo.ContainsKey(weaponData) && Inventory.Instance.weaponAmmo[weaponData] > 0) ||
+            (readyToShoot && !isShooting && !isReloading && magazineBulletsLeft <= 0 && Inventory.Instance.weaponAmmo.ContainsKey(weaponData) && Inventory.Instance.weaponAmmo[weaponData] > 0))
         {
             Reload();
         }
@@ -71,16 +79,10 @@ public class Weapon : MonoBehaviour
         {
             FireWeapon();
         }
-
-        if (AmmoManager.Instance.ammoDisplay != null)
-        {
-            AmmoManager.Instance.ammoDisplay.text = $"{magazineBulletsLeft}/{weaponData.magazineSize}";
-        }
     }
 
     private void FireWeapon()
     {
-
         magazineBulletsLeft--;
 
         if (muzzleEffect != null)
@@ -88,25 +90,39 @@ public class Weapon : MonoBehaviour
             muzzleEffect.GetComponent<ParticleSystem>().Play();
         }
 
-        if (SoundManger.Instance.shootingSoundAK47 != null)
+        string soundToPlay = "";
+        switch (weaponData.weaponName)
         {
-            SoundManger.Instance.shootingSoundAK47.Play();
+            case "M1911":
+                soundToPlay = "Pistol Fire";
+                break;
+            case "AK-47":
+                soundToPlay = "Rifle Fire";
+                break;
+            case "BenneliM4":
+                soundToPlay = "Shotgun Fire";
+                break;
+            default:
+                Debug.LogWarning("No specific sound assigned for this weapon.");
+                break;
+        }
+
+        if (!string.IsNullOrEmpty(soundToPlay))
+        {
+            AudioManager.Instance.PlaySFX(soundToPlay, 1.0f);
         }
 
         readyToShoot = false;
 
-        // Calculate random spread
         Vector3 spread = new Vector3(
             UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity),
             UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity),
             UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity)
         );
 
-        // Create ray direction with spread
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0)); // Center of the screen
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
         RaycastHit hit;
 
-        // Apply spread to the ray direction
         Vector3 direction = ray.direction + spread;
         Ray spreadRay = new Ray(ray.origin, direction);
 
@@ -121,13 +137,11 @@ public class Weapon : MonoBehaviour
 
             if (hit.collider.CompareTag("ZombieHead"))
             {
-                Debug.Log("zombie head");
-
                 Zombie zombie = hit.collider.GetComponentInParent<Zombie>();
 
                 if (zombie != null)
                 {
-                    int headshotDamage = (int)(weaponData.damage * 2); // Apply headshot damage
+                    int headshotDamage = (int)(weaponData.damage * 2);
                     zombie.TakeDamage(headshotDamage);
                     CreateDamageIndicatorEffect(hit, headshotDamage);
                 }
@@ -157,17 +171,24 @@ public class Weapon : MonoBehaviour
 
     private void Reload()
     {
-        isReloading = true;
-        Invoke("ReloadCompleted", weaponData.reloadTime);
-        if (SoundManger.Instance.reloadingSoundAK47 != null)
+        // Only reload if there is ammo available in the inventory
+        if (Inventory.Instance.weaponAmmo.ContainsKey(weaponData) && Inventory.Instance.weaponAmmo[weaponData] > 0)
         {
-            SoundManger.Instance.reloadingSoundAK47.Play();
+            isReloading = true;
+            Invoke("ReloadCompleted", weaponData.reloadTime);
+            AudioManager.Instance.PlaySFX("Reload", 1.0f);
         }
     }
 
     private void ReloadCompleted()
     {
-        magazineBulletsLeft = weaponData.magazineSize;
+        int totalAmmo = Inventory.Instance.weaponAmmo.ContainsKey(weaponData) ? Inventory.Instance.weaponAmmo[weaponData] : 0;
+        int ammoNeeded = weaponData.magazineSize - magazineBulletsLeft;
+        int ammoToReload = Mathf.Min(ammoNeeded, totalAmmo);
+
+        Inventory.Instance.weaponAmmo[weaponData] -= ammoToReload;
+        magazineBulletsLeft += ammoToReload;
+
         isReloading = false;
     }
 

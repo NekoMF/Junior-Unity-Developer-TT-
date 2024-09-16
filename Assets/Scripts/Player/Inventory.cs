@@ -11,7 +11,7 @@ public class Inventory : MonoBehaviour
     public int currentWeaponIndex = 0;
     public Dictionary<WeaponData, int> weaponAmmo; // Track ammo for each weapon
 
-    private Dictionary<WeaponData, GameObject> weaponInstances = new Dictionary<WeaponData, GameObject>();
+    public Dictionary<WeaponData, GameObject> weaponInstances = new Dictionary<WeaponData, GameObject>();
 
     private void Awake()
     {
@@ -135,6 +135,11 @@ public class Inventory : MonoBehaviour
 
                 // Instantiate the weapon and set its parent
                 GameObject weaponInstance = Instantiate(weaponPrefab, weaponParent);
+                // Initialize the ammo for this weapon if not already present
+                if (!weaponAmmo.ContainsKey(weaponData))
+                {
+                    weaponAmmo[weaponData] = weaponData.maxAmmo; // Add weapon with its max ammo
+                }
 
                 // Remove the SphereCollider component if it exists
                 SphereCollider collider = weaponInstance.GetComponent<SphereCollider>();

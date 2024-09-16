@@ -18,7 +18,8 @@ MonoBehaviour:
   magazineSize: 30
   spreadIntensity: 0.03
   reloadTime: 1.5
-  shootingDelay: 0.2
+  shootingDelay: 0.1
   weaponPrefab: {fileID: 216909499359160277, guid: 5a99ab9ce712ed84283d469cba495873, type: 3}
-  maxAmmo: 300
+  maxAmmo: 60
   shootingMode: 2
+  weaponSprite: {fileID: 21300000, guid: fda62563140b39244b624c2f1fa94b2a, type: 3}

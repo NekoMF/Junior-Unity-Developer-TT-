@@ -13,5 +13,7 @@ public class WeaponData : ScriptableObject
     public GameObject weaponPrefab;
     public int maxAmmo;
     public int shootingMode;
+    public Sprite weaponSprite;
+    
     
 }

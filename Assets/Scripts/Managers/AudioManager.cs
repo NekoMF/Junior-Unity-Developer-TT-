@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        PlayMusic("Background Music", 0.1f); 
+        PlayMusic("Background Music", 0.4f); 
     }
 
     public void PlayMusic(string name, float volume)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +10,7 @@ public class ZombieSpawnController : MonoBehaviour
     public float spawnDelay = 0.5f;
 
     public int currentWave = 0;
-    public float waveCooldown = 10f; 
+    public float waveCooldown = 10f;
 
     public bool inCooldown;
     public float cooldownCounter = 0;
@@ -21,9 +20,9 @@ public class ZombieSpawnController : MonoBehaviour
 
     private void Start()
     {
-        currentZombiePerWave = initialZombiePerWave; 
+        currentZombiePerWave = initialZombiePerWave;
         GlobalReferences.Instance.waveNumber = currentWave;
-        StartNextWave();      
+        StartNextWave();
     }
 
     private void Update()
@@ -52,6 +51,9 @@ public class ZombieSpawnController : MonoBehaviour
         if (inCooldown)
         {
             cooldownCounter -= Time.deltaTime;
+
+            // Update countdown UI
+            HUDManager.Instance.nextWaveCountdown.text = $"Next Wave in {Mathf.Ceil(cooldownCounter)} seconds";
         }
         else
         {
@@ -59,42 +61,51 @@ public class ZombieSpawnController : MonoBehaviour
         }
     }
 
-
     private IEnumerator WaveCooldown()
     {
+        // Wave is over, show "Wave is Over" text
+        HUDManager.Instance.waveOver.gameObject.SetActive(true);
         inCooldown = true;
-        yield return new WaitForSeconds (waveCooldown);
+
+        // Show countdown text
+        HUDManager.Instance.nextWaveCountdown.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(waveCooldown);
+
         inCooldown = false;
-        currentZombiePerWave *=2 ;
+        currentZombiePerWave *= 2;
+
+        // Hide "Wave is Over" and countdown text when the next wave starts
+        HUDManager.Instance.waveOver.gameObject.SetActive(false);
+        HUDManager.Instance.nextWaveCountdown.gameObject.SetActive(false);
+
         StartNextWave();
     }
 
     private void StartNextWave()
     {
         currentZombiesAlive.Clear();
-        currentWave ++;
+        currentWave++;
         StartCoroutine(SpawnWave());
         GlobalReferences.Instance.waveNumber = currentWave;
     }
 
     private IEnumerator SpawnWave()
-{
-    for (int i = 0; i < currentZombiePerWave; i++)
     {
-        Vector3 spawnOffset = new Vector3(UnityEngine.Random.Range(-1f, 1), 0f, UnityEngine.Random.Range(-1f, 1f));
-        Vector3 spawnPosition = transform.position + spawnOffset;
+        for (int i = 0; i < currentZombiePerWave; i++)
+        {
+            Vector3 spawnOffset = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0f, UnityEngine.Random.Range(-1f, 1f));
+            Vector3 spawnPosition = transform.position + spawnOffset;
 
-        
+            // Assign a random ZombieData
+            ZombieData randomData = zombieDataTypes[UnityEngine.Random.Range(0, zombieDataTypes.Count)];
+            GameObject zombie = Instantiate(randomData.zombiePrefab, spawnPosition, Quaternion.identity);
+            Zombie zombieScript = zombie.GetComponent<Zombie>();
+            zombieScript.SetZombieData(randomData);
 
-        // Assign a random ZombieData
-        ZombieData randomData = zombieDataTypes[UnityEngine.Random.Range(0, zombieDataTypes.Count)];
-        GameObject zombie = Instantiate(randomData.zombiePrefab, spawnPosition, Quaternion.identity);
-        Zombie zombieScript = zombie.GetComponent<Zombie>();
-        zombieScript.SetZombieData(randomData);
+            currentZombiesAlive.Add(zombieScript);
 
-        currentZombiesAlive.Add(zombieScript);
-
-        yield return new WaitForSeconds(spawnDelay); 
+            yield return new WaitForSeconds(spawnDelay);
+        }
     }
-}
 }

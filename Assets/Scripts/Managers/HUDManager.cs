@@ -14,6 +14,10 @@ public class HUDManager : MonoBehaviour
     public Image activeWeaponUI;
     public Image unActiveWeaponUI;
 
+    [Header("ZombieWave")]
+    public TextMeshProUGUI waveOver;
+    public TextMeshProUGUI nextWaveCountdown;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

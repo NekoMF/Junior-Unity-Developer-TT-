@@ -22,7 +22,8 @@ Texture2D:
   m_MipCount: 1
   m_IsReadable: 0
   m_IsPreProcessed: 0
-  m_IgnoreMasterTextureLimit: 0
+  m_IgnoreMipmapLimit: 0
+  m_MipmapLimitGroupName: 
   m_StreamingMipmaps: 0
   m_StreamingMipmapsPriority: 0
   m_VTOnly: 0
@@ -64,8 +65,7 @@ MonoBehaviour:
   materialHashCode: 447258579
   m_Version: 1.1.0
   m_SourceFontFileGUID: c9bc85b61cad2784b9a54b10b23be129
-  m_SourceFontFile_EditorRef: {fileID: 12800000, guid: c9bc85b61cad2784b9a54b10b23be129,
-    type: 3}
+  m_SourceFontFile_EditorRef: {fileID: 12800000, guid: c9bc85b61cad2784b9a54b10b23be129, type: 3}
   m_SourceFontFile: {fileID: 0}
   m_AtlasPopulationMode: 0
   m_FaceInfo:
@@ -74,6 +74,7 @@ MonoBehaviour:
     m_StyleName: Regular
     m_PointSize: 91
     m_Scale: 1
+    m_UnitsPerEM: 0
     m_LineHeight: 130.403
     m_AscentLine: 87.178
     m_CapLine: 57
@@ -2753,7 +2754,7 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.36
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.8333333

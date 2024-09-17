@@ -15,15 +15,12 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton Pattern Implementation
-        if (Instance == null)
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Keeps this instance alive across scenes
-        }
-        else
-        {
-            Destroy(gameObject); // Destroy duplicates if they exist
         }
     }
 

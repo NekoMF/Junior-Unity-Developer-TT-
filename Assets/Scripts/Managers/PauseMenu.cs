@@ -4,25 +4,20 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pauseMenuUI;  // Reference to the Pause Menu UI
+    public GameObject pauseMenuUI;  
     public Button resumeButton;
     public Button exitButton;
-
-    private bool isPaused = false;
+    public static bool isPaused = false;  // Static variable to track pause state
 
     private void Start()
     {
         resumeButton.onClick.AddListener(Resume);
         exitButton.onClick.AddListener(ExitToMenu);
-
-        // Ensure the pause menu is hidden at the start
         pauseMenuUI.SetActive(false);
-        UnlockMouse();  // Ensure mouse is unlocked at the start
     }
 
     private void Update()
     {
-        // Toggle pause menu with the Escape key
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
@@ -39,23 +34,24 @@ public class PauseMenu : MonoBehaviour
     private void Pause()
     {
         pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;  // Stop the game time
+        Time.timeScale = 0f;
         isPaused = true;
-        UnlockMouse();  // Unlock the mouse when paused
+        UnlockMouse();
     }
 
     private void Resume()
     {
         pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f;  // Resume the game time
+        Time.timeScale = 1f;
         isPaused = false;
-        LockMouse();  // Lock the mouse when resuming
+        LockMouse();
     }
 
     private void ExitToMenu()
     {
-        Time.timeScale = 1f;  // Ensure the game time is resumed
-        SceneManager.LoadScene("Menu");  // Load the first scene named "Menu"
+        Time.timeScale = 1f;
+        isPaused = false;  // Ensure the pause state is reset
+        SceneManager.LoadScene("Menu");
     }
 
     private void LockMouse()

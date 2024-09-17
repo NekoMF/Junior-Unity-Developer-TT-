@@ -12,12 +12,20 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
 
     public LayerMask groundMask;
-    private Animator animator; // Reference to the Animator component
+    private Animator animator; 
+    
+    public bool isAiming = false; // To check if the player is aiming
+    public float aimingFOV = 40f; // Field of View for aiming
+    public float normalFOV = 60f; // Normal Field of View
+    public float fovSmooth = 5f; // Smoothness of FOV transition
+
+    private Camera mainCamera;// Reference to the Animator component
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        animator = GetComponentInChildren<Animator>(); // Get the Animator component from the child
+        animator = GetComponentInChildren<Animator>();
+        mainCamera = Camera.main; // Get the main camera
     }
 
     void Update()
@@ -29,6 +37,19 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y = -2f;
         }
+
+        // Check for aiming input
+        if (Input.GetMouseButton(1)) // Right Mouse Button
+        {
+            isAiming = true;
+        }
+        else
+        {
+            isAiming = false;
+        }
+
+        // Update Animator parameter for aiming
+        animator.SetBool("IsAiming", isAiming);
 
         // Movement
         float moveX = Input.GetAxis("Horizontal");
@@ -56,4 +77,5 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
     }
+
 }

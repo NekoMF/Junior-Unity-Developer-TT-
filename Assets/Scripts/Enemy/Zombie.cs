@@ -29,7 +29,7 @@ public class Zombie : MonoBehaviour
         {
             // Play one of the death animations randomly
             animator.SetTrigger(UnityEngine.Random.Range(0, 2) == 0 ? "DIE1" : "DIE2");
-            AudioManager.Instance.PlaySFX("Zombie Death", 0.5f);
+            AudioManager.Instance.PlaySFX("Zombie Death", 0.7f);
 
             // Disable all colliders in this object, including children
             Collider[] colliders = GetComponentsInChildren<Collider>();
@@ -48,7 +48,7 @@ public class Zombie : MonoBehaviour
             // Play hit sound only if not already played
             if (!hasPlayedHitSound)
             {
-                AudioManager.Instance.PlaySFX("Zombie Hit", 0.5f);
+                AudioManager.Instance.PlaySFX("Zombie Hit", 0.7f);
                 hasPlayedHitSound = true; // Set flag to true after playing sound
                 StartCoroutine(ResetHitSoundFlag()); // Start coroutine to reset flag
             }

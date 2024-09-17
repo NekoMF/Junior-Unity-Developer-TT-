@@ -12,7 +12,6 @@ public class Weapon : MonoBehaviour
 
     // Shooting
     public bool isEquipped = false;
-
     public bool isShooting, readyToShoot;
     bool allowReset = true;
     public bool isReloading;
@@ -21,6 +20,9 @@ public class Weapon : MonoBehaviour
 
     // Bullet
     public GameObject muzzleEffect;
+
+    // Shotgun specifics
+    public int pelletCount = 7; // Number of pellets for shotgun
 
     private void Awake()
     {
@@ -37,14 +39,14 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
-        if (!isEquipped || weaponData == null) return; // Do nothing if weapon is not equipped
+        if (PauseMenu.isPaused || !isEquipped || weaponData == null) return;
 
         // Handle empty magazine sound
         if (magazineBulletsLeft == 0 && isShooting)
         {
             if (!hasPlayedEmptySound)
             {
-                AudioManager.Instance.PlaySFX("Magazine Empty", 1f);
+                AudioManager.Instance.PlaySFX("Magazine Empty", 0.9f);
                 hasPlayedEmptySound = true; // Set flag so sound plays only once
             }
         }
@@ -91,29 +93,103 @@ public class Weapon : MonoBehaviour
         }
 
         string soundToPlay = "";
-        switch (weaponData.weaponName)
+        if (weaponData.weaponName == "BenneliM4")
         {
-            case "M1911":
-                soundToPlay = "Pistol Fire";
-                break;
-            case "AK-47":
-                soundToPlay = "Rifle Fire";
-                break;
-            case "BenneliM4":
-                soundToPlay = "Shotgun Fire";
-                break;
-            default:
-                Debug.LogWarning("No specific sound assigned for this weapon.");
-                break;
+            soundToPlay = "Shotgun Fire";
+        }
+        else
+        {
+            switch (weaponData.weaponName)
+            {
+                case "M1911":
+                    soundToPlay = "Pistol Fire";
+                    break;
+                case "AK-47":
+                    soundToPlay = "Rifle Fire";
+                    break;
+                default:
+                    Debug.LogWarning("No specific sound assigned for this weapon.");
+                    break;
+            }
         }
 
         if (!string.IsNullOrEmpty(soundToPlay))
         {
-            AudioManager.Instance.PlaySFX(soundToPlay, 1.0f);
+            AudioManager.Instance.PlaySFX(soundToPlay, 0.9f);
         }
 
         readyToShoot = false;
 
+        if (weaponData.weaponName == "BenneliM4")
+        {
+            ShootShotgun();
+        }
+        else
+        {
+            ShootRifleOrPistol();
+        }
+
+        if (allowReset)
+        {
+            Invoke("ResetShot", weaponData.shootingDelay);
+            allowReset = false;
+        }
+    }
+
+    private void ShootShotgun()
+    {
+        for (int i = 0; i < pelletCount; i++)
+        {
+            Vector3 spread = new Vector3(
+                UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity),
+                UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity),
+                UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity)
+            );
+
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            Vector3 direction = ray.direction + spread;
+            Ray spreadRay = new Ray(ray.origin, direction);
+
+            if (Physics.Raycast(spreadRay, out RaycastHit hit, weaponData.range))
+            {
+                Debug.Log("Hit: " + hit.collider.name);
+
+                if (!(hit.collider.CompareTag("Zombie") || hit.collider.CompareTag("ZombieHead")))
+                {
+                    CreateBulletImpactEffect(hit);
+                }
+
+                if (hit.collider.CompareTag("ZombieHead"))
+                {
+                    Zombie zombie = hit.collider.GetComponentInParent<Zombie>();
+
+                    if (zombie != null)
+                    {
+                        int headshotDamage = (int)(weaponData.damage * 2);
+                        zombie.TakeDamage(headshotDamage);
+                        CreateDamageIndicatorEffect(hit, headshotDamage);
+                    }
+
+                    CreateBloodSplashEffect(hit);
+                }
+                else if (hit.collider.CompareTag("Zombie"))
+                {
+                    Zombie zombie = hit.collider.GetComponent<Zombie>();
+
+                    if (zombie != null)
+                    {
+                        zombie.TakeDamage((int)weaponData.damage);
+                        CreateDamageIndicatorEffect(hit, (int)weaponData.damage);
+                    }
+
+                    CreateBloodSplashEffect(hit);
+                }
+            }
+        }
+    }
+
+    private void ShootRifleOrPistol()
+    {
         Vector3 spread = new Vector3(
             UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity),
             UnityEngine.Random.Range(-weaponData.spreadIntensity, weaponData.spreadIntensity),
@@ -121,12 +197,10 @@ public class Weapon : MonoBehaviour
         );
 
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-        RaycastHit hit;
-
         Vector3 direction = ray.direction + spread;
         Ray spreadRay = new Ray(ray.origin, direction);
 
-        if (Physics.Raycast(spreadRay, out hit, weaponData.range))
+        if (Physics.Raycast(spreadRay, out RaycastHit hit, weaponData.range))
         {
             Debug.Log("Hit: " + hit.collider.name);
 
@@ -161,14 +235,7 @@ public class Weapon : MonoBehaviour
                 CreateBloodSplashEffect(hit);
             }
         }
-
-        if (allowReset)
-        {
-            Invoke("ResetShot", weaponData.shootingDelay);
-            allowReset = false;
-        }
     }
-
     private void Reload()
     {
         // Only reload if there is ammo available in the inventory
@@ -176,7 +243,7 @@ public class Weapon : MonoBehaviour
         {
             isReloading = true;
             Invoke("ReloadCompleted", weaponData.reloadTime);
-            AudioManager.Instance.PlaySFX("Reload", 1.0f);
+            AudioManager.Instance.PlaySFX("Reload", 0.9f);
         }
     }
 

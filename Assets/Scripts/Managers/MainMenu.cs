@@ -9,8 +9,12 @@ public class MainMenu : MonoBehaviour
     public TMP_Text highScoreUI; 
     string newGameScene  = "Main";
     // Start is called before the first frame update
+
+    public AudioClip menuMusic;
+    public AudioSource mainChannel;
     void Start()
     {
+        mainChannel.PlayOneShot(menuMusic);
         int highScore = SaveLoadManager.Instance.LoadHighScore();
         highScoreUI.text = $"Top Wave Survived: {highScore}";  
     }
@@ -23,6 +27,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartNewGame()
     {
+        mainChannel.Stop();
         SceneManager.LoadScene(newGameScene);
     }
 

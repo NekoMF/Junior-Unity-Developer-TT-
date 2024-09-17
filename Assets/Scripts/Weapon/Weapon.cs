@@ -1,14 +1,10 @@
-using System.Collections;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class Weapon : MonoBehaviour
 {
     // Reference to WeaponData
     public WeaponData weaponData;
-
-    // UI
-    public TextMeshProUGUI ammoDisplay;
 
     // Shooting
     public bool isEquipped = false;
@@ -20,17 +16,22 @@ public class Weapon : MonoBehaviour
 
     // Bullet
     public GameObject muzzleEffect;
+    int resupplyCounter = 0;
 
     // Shotgun specifics
     public int pelletCount = 7; // Number of pellets for shotgun
 
+    private Animator animator; // Reference to the Animator component on the Body GameObject
+
     private void Awake()
     {
         readyToShoot = true;
+        animator = GetComponentInParent<Animator>(); // Get the Animator component from the parent Body GameObject
     }
 
     private void Start()
     {
+        resupplyCounter = GlobalReferences.Instance.waveNumber;
         if (weaponData != null)
         {
             magazineBulletsLeft = weaponData.magazineSize; // Initialize magazine with full bullets
@@ -40,6 +41,16 @@ public class Weapon : MonoBehaviour
     void Update()
     {
         if (PauseMenu.isPaused || !isEquipped || weaponData == null) return;
+
+
+        if (resupplyCounter != GlobalReferences.Instance.waveNumber)
+        {
+            magazineBulletsLeft = weaponData.magazineSize; // Initialize magazine with full bullets
+            // Initialize total ammo to maxAmmo from weaponData
+            int totalAmmo = weaponData.maxAmmo;
+            Inventory.Instance.weaponAmmo[weaponData] = totalAmmo;
+            resupplyCounter = GlobalReferences.Instance.waveNumber;
+        }
 
         // Handle empty magazine sound
         if (magazineBulletsLeft == 0 && isShooting)
@@ -118,6 +129,12 @@ public class Weapon : MonoBehaviour
             AudioManager.Instance.PlaySFX(soundToPlay, 0.9f);
         }
 
+        // Trigger the fire animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Fire");
+        }
+
         readyToShoot = false;
 
         if (weaponData.weaponName == "BenneliM4")
@@ -152,7 +169,7 @@ public class Weapon : MonoBehaviour
 
             if (Physics.Raycast(spreadRay, out RaycastHit hit, weaponData.range))
             {
-                Debug.Log("Hit: " + hit.collider.name);
+            
 
                 if (!(hit.collider.CompareTag("Zombie") || hit.collider.CompareTag("ZombieHead")))
                 {
@@ -165,7 +182,7 @@ public class Weapon : MonoBehaviour
 
                     if (zombie != null)
                     {
-                        int headshotDamage = (int)(weaponData.damage * 2);
+                        int headshotDamage = (int)(weaponData.damage * 2 * Random.Range(0.9f, 1.1f));
                         zombie.TakeDamage(headshotDamage);
                         CreateDamageIndicatorEffect(hit, headshotDamage);
                     }
@@ -179,7 +196,7 @@ public class Weapon : MonoBehaviour
                     if (zombie != null)
                     {
                         zombie.TakeDamage((int)weaponData.damage);
-                        CreateDamageIndicatorEffect(hit, (int)weaponData.damage);
+                        CreateDamageIndicatorEffect(hit, (int)(weaponData.damage*Random.Range(0.9f, 1.1f)));
                     }
 
                     CreateBloodSplashEffect(hit);
@@ -202,7 +219,7 @@ public class Weapon : MonoBehaviour
 
         if (Physics.Raycast(spreadRay, out RaycastHit hit, weaponData.range))
         {
-            Debug.Log("Hit: " + hit.collider.name);
+            
 
             if (!(hit.collider.CompareTag("Zombie") || hit.collider.CompareTag("ZombieHead")))
             {
@@ -215,7 +232,7 @@ public class Weapon : MonoBehaviour
 
                 if (zombie != null)
                 {
-                    int headshotDamage = (int)(weaponData.damage * 2);
+                    int headshotDamage = (int)(weaponData.damage * 2 * Random.Range(0.9f, 1.1f));
                     zombie.TakeDamage(headshotDamage);
                     CreateDamageIndicatorEffect(hit, headshotDamage);
                 }
@@ -229,7 +246,7 @@ public class Weapon : MonoBehaviour
                 if (zombie != null)
                 {
                     zombie.TakeDamage((int)weaponData.damage);
-                    CreateDamageIndicatorEffect(hit, (int)weaponData.damage);
+                    CreateDamageIndicatorEffect(hit, (int)(weaponData.damage* Random.Range(0.9f, 1.1f)));
                 }
 
                 CreateBloodSplashEffect(hit);
@@ -295,9 +312,12 @@ public class Weapon : MonoBehaviour
         {
             GameObject indicator = Instantiate(
                 GlobalReferences.Instance.damageIndicatorEffectPrefab,
-                hitInfo.point,  
+                hitInfo.point ,
                 Quaternion.identity  
             );
+            Transform hitTransform = hitInfo.transform;
+            indicator.transform.SetParent(hitTransform.root, true);
+            // Adjust the position of the indicator relative to its new parent
 
             var textMesh = indicator.GetComponent<TextMeshPro>();
             if (textMesh != null)

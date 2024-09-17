@@ -73,7 +73,7 @@ public class ZombieSpawnController : MonoBehaviour
         yield return new WaitForSeconds(waveCooldown);
 
         inCooldown = false;
-        currentZombiePerWave *= 2;
+        currentZombiePerWave = (int)(currentZombiePerWave * 1.3f);
 
         // Hide "Wave is Over" and countdown text when the next wave starts
         HUDManager.Instance.waveOver.gameObject.SetActive(false);

@@ -16,10 +16,10 @@ MonoBehaviour:
   damage: 50
   range: 150
   magazineSize: 7
-  spreadIntensity: 0.04
+  spreadIntensity: 0.01
   reloadTime: 1.5
   shootingDelay: 0.5
   weaponPrefab: {fileID: 1616452181536652361, guid: 6133d6bd18ff2cc4aa135ded7cf83366, type: 3}
-  maxAmmo: 300
+  maxAmmo: 35
   shootingMode: 1
   weaponSprite: {fileID: 21300000, guid: 07f3822e11597dd48ac84e2cb7ab31aa, type: 3}

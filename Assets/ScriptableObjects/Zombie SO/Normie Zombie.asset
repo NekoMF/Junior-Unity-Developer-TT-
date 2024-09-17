@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Normie Zombie
   m_EditorClassIdentifier: 
   zombieName: Normal Zombie
-  maxHP: 100
+  maxHP: 300
   damage: 25
-  chaseSpeed: 3
-  patrollingSpeed: 1.5
-  detectionAreaRadius: 18
+  chaseSpeed: 4
+  patrollingSpeed: 3
+  detectionAreaRadius: 30
   attackDistance: 2.5
-  stopChasingDistance: 21
+  stopChasingDistance: 35
   patrollingTime: 15
   idleTime: 2
   zombiePrefab: {fileID: 3091929109152078103, guid: 4267fa053f06bc544893dbb816cd0f5d, type: 3}

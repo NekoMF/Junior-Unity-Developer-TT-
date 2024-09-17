@@ -15,11 +15,11 @@ MonoBehaviour:
   zombieName: Slow Zombie
   maxHP: 500
   damage: 45
-  chaseSpeed: 1
-  patrollingSpeed: 0.5
-  detectionAreaRadius: 18
+  chaseSpeed: 3
+  patrollingSpeed: 2
+  detectionAreaRadius: 30
   attackDistance: 2.5
-  stopChasingDistance: 21
+  stopChasingDistance: 35
   patrollingTime: 15
   idleTime: 2
   zombiePrefab: {fileID: 7586901836601201576, guid: d1369714f29b05c43b691d9b5e385ac1, type: 3}

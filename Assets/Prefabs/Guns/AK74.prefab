@@ -123,12 +123,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponData: {fileID: 11400000, guid: fe6c655529833b745b09eba8e9f30e00, type: 2}
-  ammoDisplay: {fileID: 0}
+  isEquipped: 0
   isShooting: 0
   readyToShoot: 0
   isReloading: 0
   magazineBulletsLeft: 0
   muzzleEffect: {fileID: 8345674246831984757}
+  pelletCount: 7
 --- !u!1 &925376715165141893
 GameObject:
   m_ObjectHideFlags: 0

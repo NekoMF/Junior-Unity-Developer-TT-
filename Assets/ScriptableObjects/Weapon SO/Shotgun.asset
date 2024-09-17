@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: 
   weaponName: BenneliM4
-  damage: 200
-  range: 100
-  magazineSize: 22
+  damage: 45
+  range: 30
+  magazineSize: 8
   spreadIntensity: 0.07
   reloadTime: 1.5
   shootingDelay: 2
   weaponPrefab: {fileID: 1000344491102708933, guid: 699f1444ea1cb0a48954cb4c869ce7f7, type: 3}
-  maxAmmo: 40
+  maxAmmo: 24
   shootingMode: 1
   weaponSprite: {fileID: 21300000, guid: 0633167744d286645ae3b518cf4b9273, type: 3}

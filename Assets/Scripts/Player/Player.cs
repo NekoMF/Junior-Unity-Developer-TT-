@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
 
     private void Start() {
         playerHealthUI.text = $"Health: {playerHP}";
-    }
+        }
 
     public void TakeDamage (int damageAmount)
     {
@@ -38,26 +38,37 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void PlayerDeath()
+   private void PlayerDeath()
+{
+    // Disable player controls
+    GetComponent<PlayerMovement>().enabled = false;
+    GetComponent<AimStateManager>().enabled = false;
+    playerHealthUI.gameObject.SetActive(false);
+
+    // Trigger death animation
+    Animator animator = GetComponentInChildren<Animator>();
+    if (animator != null)
     {
-        GetComponent<PlayerMovement>().enabled = false;
-        GetComponent<AimStateManager>().enabled = false;
-        playerHealthUI.gameObject.SetActive(false);
-        GetComponent<ScreenFader>().StartFade();
-        StartCoroutine(ShowGameOverUI());
-
-        int waveSurvived = GlobalReferences.Instance.waveNumber;
-        int savedHighScore = SaveLoadManager.Instance.LoadHighScore();
-
-        // Save the maximum of the current wave or the previously saved high score
-        SaveLoadManager.Instance.SaveHighScore(Mathf.Max(waveSurvived - 1, savedHighScore));
-
-
-        isDead = true;
+        animator.SetTrigger("DEATH");
     }
+    // Fade the screen
+    GetComponent<ScreenFader>().StartFade();
+    StartCoroutine(ShowGameOverUI());
+
+    int waveSurvived = GlobalReferences.Instance.waveNumber;
+    int savedHighScore = SaveLoadManager.Instance.LoadHighScore();
+
+    // Save the maximum of the current wave or the previously saved high score
+    SaveLoadManager.Instance.SaveHighScore(Mathf.Max(waveSurvived - 1, savedHighScore));
+
+    isDead = true;
+}
+
 
     private IEnumerator ShowGameOverUI()
     {
+        
+        AudioManager.Instance.PlaySFX("GameOver", 1f);
         yield return new WaitForSeconds(1f);
         gameOverUI.gameObject.SetActive(true);
         StartCoroutine(ReturnToMainMenu());
@@ -123,7 +134,12 @@ public class Player : MonoBehaviour
 
             // Deal damage to the player using the damage value from ZombieData
             TakeDamage(zombieData.damage);
-            Debug.Log(zombieData.damage);
+
         }
     }
+
+    private void TestDeathAnimation()
+{
+    
+}
 }

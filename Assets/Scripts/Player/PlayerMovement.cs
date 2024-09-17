@@ -13,19 +13,11 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask groundMask;
     private Animator animator; 
-    
-    public bool isAiming = false; // To check if the player is aiming
-    public float aimingFOV = 40f; // Field of View for aiming
-    public float normalFOV = 60f; // Normal Field of View
-    public float fovSmooth = 5f; // Smoothness of FOV transition
-
-    private Camera mainCamera;// Reference to the Animator component
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
-        mainCamera = Camera.main; // Get the main camera
     }
 
     void Update()
@@ -38,25 +30,28 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // Check for aiming input
-        if (Input.GetMouseButton(1)) // Right Mouse Button
-        {
-            isAiming = true;
-        }
-        else
-        {
-            isAiming = false;
-        }
-
-        // Update Animator parameter for aiming
-        animator.SetBool("IsAiming", isAiming);
-
         // Movement
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
-        float speed = (Input.GetKey(KeyCode.LeftShift) && moveZ > 0) ? sprintSpeed : walkSpeed;
+        float speed;
+
+        if (Input.GetKey(KeyCode.LeftShift) && moveZ > 0)
+        {
+            // Sprinting forward
+            speed = sprintSpeed;
+        }
+        else if (Input.GetKey(KeyCode.LeftShift) && moveZ < 0)
+        {
+            speed = sprintSpeed * 0.80f;
+        }
+        else
+        {
+            // Walking forward or backward
+            speed = walkSpeed;
+        }
+
         float moveSpeed = move.magnitude * speed;
 
         // Update Animator parameter for Blend Tree
